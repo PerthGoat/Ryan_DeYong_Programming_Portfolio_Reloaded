@@ -16,7 +16,7 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
         private const string path_offset = "master_directory/templates/";
 
         public string ReplaceTemplatesInString(string s) {
-            Regex re = new Regex("%%(.*?)%%");
+            Regex re = new Regex("%%.*?%%");
             MatchCollection matches = re.Matches(s);
             for (int i = 0; i < matches.Count; i++) {
                 string match_str = matches[i].ToString();

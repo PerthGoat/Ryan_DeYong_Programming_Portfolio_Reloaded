@@ -71,11 +71,9 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
             }
         }
 
-        private static void Send(Socket handler, String data)
+        private static void Send(Socket handler, byte[] data)
         {
-            byte[] byteData = Encoding.ASCII.GetBytes(data);
-
-            handler.BeginSend(byteData, 0, byteData.Length, 0,
+            handler.BeginSend(data, 0, data.Length, 0,
             new AsyncCallback(SendCallback), handler);
         }
 
@@ -83,15 +81,21 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
             Console.WriteLine(handler.RemoteEndPoint + " :: " + error);
         }
 
-        private static string BuildHTMLResponse(string filename) {
+        private static byte[] BuildHTMLResponse(string filename) {
             string response = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=ascii\nConnection: Closed\n";
-            string file_text = File.ReadAllText(filename);
-            TemplateEngine te = new TemplateEngine();
-            file_text = te.ReplaceTemplatesInString(file_text);
+            byte[] file_text = File.ReadAllBytes(filename);
+
+            string file_type = filename.Split('.').Last().ToUpper();
+
+            if (file_type == "HTML")
+            {
+                TemplateEngine te = new TemplateEngine();
+                file_text = Encoding.ASCII.GetBytes(te.ReplaceTemplatesInString(Encoding.ASCII.GetString(file_text)));
+            }
 
             response += "Content-Length: " + file_text.Length + "\n\n";
-            response += file_text;
-            return response;
+
+            return Encoding.ASCII.GetBytes(response).Concat(file_text).ToArray();
         }
 
         private static void ServeFile(Socket handler, string filename) {
@@ -111,14 +115,14 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
             if (!cur_dir.FullName.StartsWith(server_dir.FullName, StringComparison.InvariantCultureIgnoreCase))
             {
                 LogMessage(handler, "Requested file OUTSIDE of the handling directory! Sending a 404!");
-                Send(handler, "HTTP/1.1 404 Not Found\nRefresh:0\nConnection: Closed\n");
+                Send(handler, Encoding.ASCII.GetBytes("HTTP/1.1 404 Not Found\nRefresh:0\nConnection: Closed\n"));
                 return;
             }
 
             if (!File.Exists(filename))
             {
                 LogMessage(handler, "Requested invalid file " + filename + ". Sending 404 now.");
-                Send(handler, "HTTP/1.1 404 Not Found\nRefresh:0\nConnection: Closed\n");
+                Send(handler, Encoding.ASCII.GetBytes("HTTP/1.1 404 Not Found\nRefresh:0\nConnection: Closed\n"));
                 return;
             }
             else {
