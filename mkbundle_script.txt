@@ -1,0 +1,1 @@
+mkbundle --deps --static -o Web_Server Web_Server.exe
