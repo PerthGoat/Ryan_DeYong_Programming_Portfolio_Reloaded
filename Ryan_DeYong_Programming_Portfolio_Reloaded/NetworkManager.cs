@@ -16,6 +16,8 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
          * Creates a new NetworkManager with the port specified
          * */
         public NetworkManager(int port) {
+            Console.WriteLine("Server started on port " + port);
+
             //IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             //IPAddress ipAddress = ipHostInfo.AddressList[0];
             IPAddress ipAddress = IPAddress.Loopback;
