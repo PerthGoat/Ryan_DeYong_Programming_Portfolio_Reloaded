@@ -18,9 +18,9 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
         public NetworkManager(int port) {
             Console.WriteLine("Server started on port " + port);
 
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            //IPAddress ipAddress = IPAddress.Loopback; enable for debugging on localhost
+            //IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            //IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPAddress ipAddress = IPAddress.Loopback; //enable for debugging on localhost
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
 
             Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -135,7 +135,15 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
         private static void ReadCallback(IAsyncResult ar) {
             object[] passedValues = (object[])ar.AsyncState;
             Socket handler = (Socket)passedValues[1];
-            int bytes_input = handler.EndReceive(ar);
+            int bytes_input = 0;
+            try
+            {
+                bytes_input = handler.EndReceive(ar);
+            }
+            catch (Exception e) {
+                LogMessage(handler, "Connection reset by peer!");
+                return;
+            }
 
             LogMessage(handler, "Received " + bytes_input + " byte header!");
             string in_req = Encoding.ASCII.GetString((byte[])passedValues[0]);
