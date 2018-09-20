@@ -18,9 +18,9 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
         public NetworkManager(int port) {
             Console.WriteLine("Server started on port " + port);
 
-            //IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            //IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPAddress ipAddress = IPAddress.Loopback; //enable for debugging on localhost
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            //IPAddress ipAddress = IPAddress.Loopback; //enable for debugging on localhost
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
 
             Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -80,7 +80,13 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
         }
 
         private static void LogMessage(Socket handler, string error) {
-            Console.WriteLine(handler.RemoteEndPoint + " :: " + error);
+            try
+            {
+                Console.WriteLine(handler.RemoteEndPoint + " :: " + error);
+            }
+            catch (Exception e) {
+                Console.WriteLine("UNABLE TO DETERMINE ENDPOINT :: " + error);
+            }
         }
 
         private static byte[] BuildHTMLResponse(string filename) {
