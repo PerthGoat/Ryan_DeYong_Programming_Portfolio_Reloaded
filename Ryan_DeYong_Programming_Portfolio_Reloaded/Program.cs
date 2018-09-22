@@ -14,7 +14,7 @@ namespace Ryan_DeYong_Programming_Portfolio_Reloaded
 
         static void Main(string[] args)
         {
-            new NetworkManager(8080);
+            new NetworkManager(80);
         }
     }
 }
